@@ -107,5 +107,5 @@ $ make convert_sv2v DESIGN_NAME=gcd DESIGN_FILELIST=examples/gcd/gcd.flist
 To see the converted file, run:
 
 ```
-cat ./results/gcd.sv2v.v
+$ cat ./results/gcd.sv2v.v
 ```
