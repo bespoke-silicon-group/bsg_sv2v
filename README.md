@@ -12,7 +12,7 @@ of the design, and then post-processes to map DC's gtech/seqqen/datapath represe
 back to stanadard Verilog. Thus a DC license is required by the party
 running the tool, but is not required to use the converted file.
 
-This approach maximizes compatability with code that was written and targets
+This approach maximizes compatibility with code that was written and targets
 DC. Of course it would also be neat if somebody wrote a totally open source SV to V!
 
 ## Setup
