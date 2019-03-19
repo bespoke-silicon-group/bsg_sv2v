@@ -1,16 +1,16 @@
-# BSG SystemVerilog to Verilog-05 (SV2V) Converter
+# BSG SystemVerilog to Verilog (SV2V) 
 
-The BSG SV2V converter flow is designed to take a hardware design that has been
-written in SystemVerilog and convert it into a single HDL file that is
-Verilog-2005 compliant. The Verilog-2005 standard is much more compatible with
-current open-source CAD tools, thus this converter can help bridge the gap 
-between large designs sing advanced synthesizable SystemVerilog features and 
-the open-source hardware community.
+BSG SV2V  takes a hardware design
+written in SystemVerilog and converts it into a single HDL file that is
+Verilog-2005 compliant. The Verilog-2005 standard is compatible with
+a much wider variety of CAD tools, thus this converter can help bridge the gap 
+between code bases employing advanced synthesizable SystemVerilog features and 
+older or less sophisticated tools.
 
-This converter flow uses Synopsys Design Compiler so it is not compatible with
-a fully open-source stack, however the idea is to allow users with access to
-licensed CAD tools to convert their designs and open-source a version of the 
-design that is compatible with current open-source CAD tools.
+The tool uses Synopsys Design Compiler (DC) to perform elaboration
+of the design, and then post-processes to maps DC's gtech/seqqen/datapath representation
+back to stanadard Verilog. Thus a DC license is required by the party
+running the tool, but not by the party using the converted file.
 
 ## Setup
 
