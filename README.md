@@ -8,9 +8,12 @@ between code bases employing advanced synthesizable SystemVerilog features and
 older or less sophisticated tools.
 
 The tool uses Synopsys Design Compiler (DC) to perform elaboration
-of the design, and then post-processes to maps DC's gtech/seqqen/datapath representation
+of the design, and then post-processes to map DC's gtech/seqqen/datapath representation
 back to stanadard Verilog. Thus a DC license is required by the party
-running the tool, but not by the party using the converted file.
+running the tool, but is not required to use the converted file.
+
+This approach maximizes compatability with code that was written and targets
+DC. Of course it would also be neat if somebody wrote a totally open source SV to V!
 
 ## Setup
 
