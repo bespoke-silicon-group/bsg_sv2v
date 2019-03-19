@@ -40,13 +40,14 @@ seqgen_modules_funcs    = get_all_functions( bsg_seqgen_modules )
 # replacing GTECH, SYNTHETIC and SEQGEN constructrs for synthesizable RTL.
 def ast_walk_and_swap_inplace( node ):
 
+  gtech_swap_count     = 0
+  synthetic_swap_count = 0
+  seqgen_swap_count    = 0
+
   ### Handle module definitions
   if type(node) == ast.ModuleDef:
     
     number_of_items      = len(node.items)
-    gtech_swap_count     = 0
-    synthetic_swap_count = 0
-    seqgen_swap_count    = 0
 
     logging.info("Module Name: %s" % node.name)
     logging.info("\t Item Count: %d" % number_of_items)
@@ -124,5 +125,10 @@ def ast_walk_and_swap_inplace( node ):
   ### Recursivly walk down all other nodes
   else:
     for c in node.children():
-      ast_walk_and_swap_inplace(c)
+      (gtech,synth,seqgen) = ast_walk_and_swap_inplace(c)
+      gtech_swap_count     += gtech
+      synthetic_swap_count += synth
+      seqgen_swap_count    += seqgen
+
+  return (gtech_swap_count, synthetic_swap_count, seqgen_swap_count)
 

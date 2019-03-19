@@ -52,7 +52,12 @@ ast, directives = vparser.parse([args.infile])
 ### Walk the AST and replace DesignCompiler constructs with RTL
 
 logging.info('Performing AST replacements.')
-ast_walk_and_swap_inplace( ast )
+(gtech, synth, seqgen) = ast_walk_and_swap_inplace( ast )
+total = gtech + synth + seqgen
+logging.info('Total Number of Replacements = %d' % total)
+logging.info("\t GTECH swap Count: %d (%d%%)" % (gtech, (gtech/total)*100))
+logging.info("\t SYNTHETIC swap Count: %d (%d%%)" % (synth, (synth/total)*100))
+logging.info("\t SEQGEN swap Count: %d (%d%%)" % (seqgen, (seqgen/total)*100))
 
 ### Output RTL
 
