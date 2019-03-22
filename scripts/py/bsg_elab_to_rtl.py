@@ -20,6 +20,7 @@ import logging
 from pyverilog.vparser import parser as vparser
 from pyverilog.ast_code_generator.codegen import ASTCodeGenerator
 from bsg_ast_walk_and_swap_inplace import ast_walk_and_swap_inplace 
+from bsg_seqgen_redux_pass_inplace import seqgen_redux_pass_inplace 
 
 ### Setup the argument parsing
 
@@ -58,6 +59,12 @@ logging.info('Total Number of Replacements = %d' % total)
 logging.info("\t GTECH swap Count: %d (%d%%)" % (gtech, (gtech/total)*100))
 logging.info("\t SYNTHETIC swap Count: %d (%d%%)" % (synth, (synth/total)*100))
 logging.info("\t SEQGEN swap Count: %d (%d%%)" % (seqgen, (seqgen/total)*100))
+
+### Walk the AST and replace DesignCompiler constructs with RTL
+
+logging.info('Performing SEQGEN redux.')
+seqgen_redux_pass_inplace( ast )
+# TODO: Stats?
 
 ### Output RTL
 
