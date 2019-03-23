@@ -1,6 +1,7 @@
 '''
 usage: bsg_elab_to_rtl.py [-h] -i file -o file
                           [-loglvl {debug,info,warning,error,critical}]
+                          [-no_seqgen_opt] [-no_concat_opt]
 
 This script takes an elaborated netlest from Synopsys DesignCompiler and
 converts it back into a RTL verilog netlist.
@@ -11,6 +12,8 @@ optional arguments:
   -o file               Output file
   -loglvl {debug,info,warning,error,critical}
                         Set the logging level
+  -no_seqgen_opt        Turns off the seqgen redux optimization pass
+  -no_concat_opt        Turns off the concat redux optimization pass
 '''
 
 import sys
@@ -21,6 +24,7 @@ from pyverilog.vparser import parser as vparser
 from pyverilog.ast_code_generator.codegen import ASTCodeGenerator
 from bsg_ast_walk_and_swap_inplace import ast_walk_and_swap_inplace 
 from bsg_seqgen_redux_pass_inplace import seqgen_redux_pass_inplace 
+from bsg_concat_redux_pass_inplace import concat_redux_pass_inplace 
 
 ### Setup the argument parsing
 
@@ -35,6 +39,10 @@ parser = argparse.ArgumentParser(description=desc)
 parser.add_argument('-i',      metavar='file',                     dest='infile',    required=True,  type=str, help='Input file')
 parser.add_argument('-o',      metavar='file',                     dest='outfile',   required=True,  type=str, help='Output file')
 parser.add_argument('-loglvl', choices=log_levels, default='info', dest='log_level', required=False, type=str, help='Set the logging level')
+
+parser.add_argument('-no_seqgen_opt', dest='seqgen_opt', action='store_false', help='Turns off the seqgen redux optimization pass')
+parser.add_argument('-no_concat_opt', dest='concat_opt', action='store_false', help='Turns off the concat redux optimization pass')
+
 args = parser.parse_args()
 
 ### Configure the logger
@@ -60,11 +68,23 @@ logging.info("\t GTECH swap Count: %d (%d%%)" % (gtech, (gtech/total)*100))
 logging.info("\t SYNTHETIC swap Count: %d (%d%%)" % (synth, (synth/total)*100))
 logging.info("\t SEQGEN swap Count: %d (%d%%)" % (seqgen, (seqgen/total)*100))
 
-### Walk the AST and replace DesignCompiler constructs with RTL
+### Perform seqgen redux optimization pass
 
-logging.info('Performing SEQGEN redux.')
-seqgen_redux_pass_inplace( ast )
-# TODO: Stats?
+if args.seqgen_opt:
+  logging.info('Performing SEQGEN redux optimization.')
+  seqgen_redux_pass_inplace( ast )
+  # TODO: Stats?
+else:
+  logging.info( 'SEQGEN redux optimization has been turned off.')
+
+### Perform concat redux optimization pass
+
+if args.concat_opt:
+  logging.info('Performing Concat redux optimization.')
+  concat_redux_pass_inplace( ast )
+  # TODO: Stats?
+else:
+  logging.info( 'Concat redux optimization has been turned off.')
 
 ### Output RTL
 
