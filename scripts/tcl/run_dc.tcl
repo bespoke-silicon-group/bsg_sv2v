@@ -19,6 +19,7 @@ set_app_var link_library        ""                        ;# Empty link library
 set_app_var target_library      "*"                       ;# Default target library
 set_app_var hdlin_infer_mux     none                      ;# Use SELCT_OP over MUX_OP synthetic module
 set_app_var sh_command_log_file $OUTPUT_DIR/command.log   ;# Redirect command.log file
+set_app_var verilogout_no_tri   true                      ;# Make unknown port connections wires not tris
 
 ### Read in the filelist
 
