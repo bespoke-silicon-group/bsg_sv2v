@@ -26,6 +26,9 @@ from bsg_ast_walk_and_swap_inplace import ast_walk_and_swap_inplace
 from bsg_seqgen_redux_pass_inplace import seqgen_redux_pass_inplace 
 from bsg_concat_redux_pass_inplace import concat_redux_pass_inplace 
 
+# Update recursion depth (default 1000)
+sys.setrecursionlimit(1500)
+
 ### Setup the argument parsing
 
 desc = '''
