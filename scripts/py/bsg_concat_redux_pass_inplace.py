@@ -50,7 +50,7 @@ def __squash_concat_inplace( cc ):
       ptr_start = item.ptr
       ptr_end   = item.ptr
     elif type(item) == Pointer and ptr_var:
-      if ptr_var == item.var and abs(int(item.ptr.value)-int(ptr_end.value)) == 1:
+      if ptr_var == item.var and int(ptr_end.value)-int(item.ptr.value) == 1:
         ptr_end = item.ptr
       else:
         cc_vals.append(Partselect(ptr_var, ptr_start, ptr_end))

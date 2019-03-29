@@ -95,20 +95,22 @@ def __merge_if_statements( ifstmt1, ifstmt2 ):
   if type(ifstmt1.false_statement) == IfStatement:
     merged_false = __merge_if_statements(ifstmt1.false_statement, ifstmt2.false_statement)
   elif ifstmt1.false_statement:
-    merged_false = ifstmt1.false_statement.statements + ifstmt2.false_statement.statements
+    merged_false = Block(ifstmt1.false_statement.statements + ifstmt2.false_statement.statements)
   else:
     merged_false = None
 
   # Merge true case (for seqgen true statement will not be a nested if)
-  if ifstmt1.true_statement:
-    merged_true = ifstmt1.true_statement.statements + ifstmt2.true_statement.statements
+  if type(ifstmt1.true_statement) == IfStatement:
+    merged_true = __merge_if_statements(ifstmt1.true_statement, ifstmt2.true_statement)
+  elif ifstmt1.true_statement:
+    merged_true = Block(ifstmt1.true_statement.statements + ifstmt2.true_statement.statements)
   else:
     merged_true = None
 
   # Return new merged if statement ast
   return IfStatement( ifstmt1.cond
-                    , (Block(merged_true)  if merged_true  else None)
-                    , (Block(merged_false) if merged_false else None) )
+                    , (merged_true  if merged_true  else None)
+                    , (merged_false if merged_false else None) )
 
 
 # __if_statement_eq( ifstmt1, ifstmt2 )
@@ -128,12 +130,16 @@ def __if_statement_eq( ifstmt1, ifstmt2 ):
     if not __if_statement_eq(ifstmt1.false_statement, ifstmt2.false_statement):
       return False
   else:
-    if not type(ifstmt1.false_statement) == type(ifstmt1.false_statement):
+    if not type(ifstmt1.false_statement) == type(ifstmt2.false_statement):
       return False
 
   # Check true case (for seqgen true statement will not be a nested if)
-  if not type(ifstmt1.true_statement) == type(ifstmt1.true_statement):
-    return False
+  if type(ifstmt1.true_statement) == IfStatement and type(ifstmt2.true_statement) == IfStatement:
+    if not __if_statement_eq(ifstmt1.true_statement, ifstmt2.true_statement):
+      return False
+  else:
+    if not type(ifstmt1.true_statement) == type(ifstmt2.true_statement):
+      return False
 
   # Made it past all checks... we shall call these equal!
   return True
@@ -151,11 +157,14 @@ def __squash_if_statement_inplace( ifstmt ):
   if type(ifstmt.false_statement) == IfStatement:
     __squash_if_statement_inplace( ifstmt.false_statement )
   elif type(ifstmt.false_statement) == Block:
+    print(type(ifstmt))
     __squash_nonblocking_in_block_inplace( ifstmt.false_statement )
 
   # Squash true case 
-  if type(ifstmt.true_statement) == Block:
-     __squash_nonblocking_in_block_inplace( ifstmt.true_statement )
+  if type(ifstmt.true_statement) == IfStatement:
+    __squash_if_statement_inplace( ifstmt.true_statement )
+  elif type(ifstmt.true_statement) == Block:
+    __squash_nonblocking_in_block_inplace( ifstmt.true_statement )
 
 
 # __squash_nonblocking_in_block_inplace( block )

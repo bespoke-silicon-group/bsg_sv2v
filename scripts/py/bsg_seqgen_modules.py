@@ -120,7 +120,7 @@ def SEQGEN( instance, wires, regs ):
   if has_inverted_output:    __convert_pin_to_reg(p['QN'], wires, regs)
 
   # Return always block AST
-  return Always(SensList(sens), Block([stmt]))
+  return Always(SensList(sens), stmt if type(stmt) == Block else Block([stmt]))
   
 ################################################################################
 # Utility function that will take a port and make sure that it is declared as a
