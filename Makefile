@@ -66,6 +66,8 @@ export PATH:=$(PATH):$(IVERILOG_BUILD_DIR)/install/bin
 # MAIN TARGET
 #===============================================================================
 
+.DEFAULT_GOAL=convert_sv2v
+
 export OUTPUT_DIR       :=$(CURDIR)/results
 export OUTPUT_ELAB_FILE :=$(OUTPUT_DIR)/$(DESIGN_NAME).elab.v
 export OUTPUT_SV2V_FILE :=$(OUTPUT_DIR)/$(DESIGN_NAME).sv2v.v
@@ -76,9 +78,14 @@ LOGLVL:=info
 #LOGLVL:=error
 #LOGLVL:=critical
 
-convert_sv2v:
+convert_sv2v: synth elab_to_rtl
+
+synth:
 	mkdir -p $(OUTPUT_DIR)
 	$(DC_SHELL) -64bit -f $(TOP_DIR)/scripts/tcl/run_dc.tcl 2>&1 | tee -i $(OUTPUT_DIR)/$(DESIGN_NAME).synth.log
+
+elab_to_rtl:
+	mkdir -p $(OUTPUT_DIR)
 	$(PYTHON) $(TOP_DIR)/scripts/py/bsg_elab_to_rtl.py -i $(OUTPUT_ELAB_FILE) -o $(OUTPUT_SV2V_FILE) -loglvl $(LOGLVL) 2>&1 | tee -i $(OUTPUT_DIR)/$(DESIGN_NAME).elab_to_rtl.log
 
 #===============================================================================
