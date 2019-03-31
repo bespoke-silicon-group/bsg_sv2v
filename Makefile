@@ -128,6 +128,7 @@ $(PYVERILOG_BUILD_DIR): $(VIRTUALENV_BUILD_DIR) $(IVERILOG_BUILD_DIR)
 	mkdir -p $(@D)
 	git clone https://github.com/PyHDI/Pyverilog.git $@
 	cd $@; git checkout 1.1.3
+	cd $@; git apply $(TOP_DIR)/patches/pyverilog_add_wirelist_reglist.patch
 	cd $@; $(PYTHON) setup.py install
 
 clean_tools:
