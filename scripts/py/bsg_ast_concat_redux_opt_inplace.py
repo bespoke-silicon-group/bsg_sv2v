@@ -1,24 +1,23 @@
 '''
-bsg_concat_redux_pass_inplace.py
+bsg_ast_concat_redux_opt_inplace.py
 
-This optimization pass will go through all of the concat statements and
-try and reduce the complexity of them by finding consecutive bits of the same
-bus and collapsing them into a single bus bit-select statement.
+This optimization pass will go through all of the concat statements and try and
+reduce the complexity of them by finding consecutive bits of the same bus and
+collapsing them into a single bus bit-select statement.
 '''
 
 import logging
 
 from pyverilog.vparser.ast import *
 
-
-# concat_redux_pass_inplace( node )
+# ast_concat_redux_opt_inplace( node )
 # 
 # Main optimization pass. This will go through the whole AST and find LHS and
 # RHS concats and try to reduce the complexity of them by finding consecutive
 # bits of the same bus and collapsing them into a single bus bit-select
 # statement.
 # 
-def concat_redux_pass_inplace( node ):
+def ast_concat_redux_opt_inplace( node ):
 
   # Find LConcat or regular Concat objects
   if type(node) == LConcat or type(node) == Concat:
@@ -27,8 +26,7 @@ def concat_redux_pass_inplace( node ):
   # Recursivly walk down all other nodes
   else:
     for c in node.children():
-      concat_redux_pass_inplace(c)
-
+      ast_concat_redux_opt_inplace(c)
 
 # __squash_concat_inplace( cc )
 #

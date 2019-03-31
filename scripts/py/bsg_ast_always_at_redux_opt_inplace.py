@@ -1,9 +1,9 @@
 '''
-bsg_seqgen_redux_pass_inplace.py
+bsg_ast_always_at_redux_opt_inplace.py
 
-This optimization pass will go through all of the always statements created by
-converting SEQGEN cells to RTL and reduce the AST complexity. Primarily, it is
-going to squash always blocks with the same sensitivity lists and merge if
+This optimization pass will go through all of the always at statements created
+by converting SEQGEN cells to RTL and reduce the AST complexity. Primarily, it
+is going to squash always blocks with the same sensitivity lists and merge if
 statements within the always block that are based on the same conditions. It
 also searches through all the non-blocking assignments in the block and combine
 assignments for multi-bit buses. It does so by creating a large concat on the
@@ -16,8 +16,7 @@ import logging
 
 from pyverilog.vparser.ast import *
 
-
-# seqgen_redux_pass_inplace( node )
+# ast_always_at_redux_opt_inplace( node )
 #
 # Main optimization pass. This will go through the whole AST and find always
 # blocks from seqgen cells. It will combine sensitivity lists and if-statements
@@ -27,7 +26,7 @@ from pyverilog.vparser.ast import *
 # right to make for further optimization later (primarily from the
 # concat_redux_pass_inplace).
 #
-def seqgen_redux_pass_inplace( node ):
+def ast_always_at_redux_opt_inplace( node ):
 
   ### Stop at the module, the items list will have the always blocks
 
@@ -80,8 +79,7 @@ def seqgen_redux_pass_inplace( node ):
 
   else:
     for c in node.children():
-      seqgen_redux_pass_inplace(c)
-
+      ast_always_at_redux_opt_inplace(c)
 
 # __merge_if_statements( ifstmt1, ifstmt2 )
 #
@@ -111,7 +109,6 @@ def __merge_if_statements( ifstmt1, ifstmt2 ):
   return IfStatement( ifstmt1.cond
                     , (merged_true  if merged_true  else None)
                     , (merged_false if merged_false else None) )
-
 
 # __if_statement_eq( ifstmt1, ifstmt2 )
 #
@@ -144,7 +141,6 @@ def __if_statement_eq( ifstmt1, ifstmt2 ):
   # Made it past all checks... we shall call these equal!
   return True
 
-
 # __squash_if_statement_inplace( ifstmt )
 #
 # Take the given if statement and reduce the complexity of the ast by squashing
@@ -165,7 +161,6 @@ def __squash_if_statement_inplace( ifstmt ):
     __squash_if_statement_inplace( ifstmt.true_statement )
   elif type(ifstmt.true_statement) == Block:
     __squash_nonblocking_in_block_inplace( ifstmt.true_statement )
-
 
 # __squash_nonblocking_in_block_inplace( block )
 #
