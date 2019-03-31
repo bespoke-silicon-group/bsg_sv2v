@@ -1,6 +1,7 @@
 '''
 usage: bsg_elab_to_rtl.py [-h] -i file -o file
                           [-loglvl {debug,info,warning,error,critical}]
+                          [-no_wire_reg_decl_opt]
                           [-no_seqgen_opt] [-no_concat_opt]
 
 This script takes an elaborated netlest from Synopsys DesignCompiler and
@@ -12,6 +13,9 @@ optional arguments:
   -o file               Output file
   -loglvl {debug,info,warning,error,critical}
                         Set the logging level
+  -no_wire_reg_decl_opt
+                        Prevent the wire and reg declaration optimization
+                        pass.
   -no_seqgen_opt        Turns off the seqgen redux optimization pass
   -no_concat_opt        Turns off the concat redux optimization pass
 '''
@@ -22,7 +26,9 @@ import logging
 
 from pyverilog.vparser import parser as vparser
 from pyverilog.ast_code_generator.codegen import ASTCodeGenerator
+
 from bsg_ast_walk_and_swap_inplace import ast_walk_and_swap_inplace 
+from bsg_ast_wire_reg_decl_opt_inplace import ast_wire_reg_decl_opt_inplace
 from bsg_seqgen_redux_pass_inplace import seqgen_redux_pass_inplace 
 from bsg_concat_redux_pass_inplace import concat_redux_pass_inplace 
 
@@ -42,6 +48,10 @@ parser = argparse.ArgumentParser(description=desc)
 parser.add_argument('-i',      metavar='file',                     dest='infile',    required=True,  type=str, help='Input file')
 parser.add_argument('-o',      metavar='file',                     dest='outfile',   required=True,  type=str, help='Output file')
 parser.add_argument('-loglvl', choices=log_levels, default='info', dest='log_level', required=False, type=str, help='Set the logging level')
+
+# Turn on/off optimization passes
+wire_reg_decl_opt_help = 'Prevent the wire and reg declaration optimization pass.'
+parser.add_argument('-no_wire_reg_decl_opt', dest='wire_reg_decl_opt', action='store_false', help=wire_reg_decl_opt_help)
 
 parser.add_argument('-no_seqgen_opt', dest='seqgen_opt', action='store_false', help='Turns off the seqgen redux optimization pass')
 parser.add_argument('-no_concat_opt', dest='concat_opt', action='store_false', help='Turns off the concat redux optimization pass')
@@ -72,6 +82,13 @@ logging.info("\t SYNTHETIC swap Count: %d (%d%%)" % (synth, (synth/total)*100))
 logging.info("\t SEQGEN swap Count: %d (%d%%)" % (seqgen, (seqgen/total)*100))
 
 ### Perform seqgen redux optimization pass
+
+### Perform various optimization passes
+
+# Wire / Reg Declartion Optimization
+if args.wire_reg_decl_opt:
+  logging.info('Performing wire/reg declartion optimizations.')
+  ast_wire_reg_decl_opt_inplace( ast )
 
 if args.seqgen_opt:
   logging.info('Performing SEQGEN redux optimization.')
