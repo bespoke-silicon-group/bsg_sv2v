@@ -1,6 +1,7 @@
 '''
 usage: bsg_elab_to_rtl.py [-h] -i file -o file
                           [-loglvl {debug,info,warning,error,critical}]
+                          [-no_wire_reg_decl_opt]
 
 This script takes an elaborated netlest from Synopsys DesignCompiler and
 converts it back into a RTL verilog netlist.
@@ -11,6 +12,9 @@ optional arguments:
   -o file               Output file
   -loglvl {debug,info,warning,error,critical}
                         Set the logging level
+  -no_wire_reg_decl_opt
+                        Prevent the wire and reg declaration optimization
+                        pass.
 '''
 
 import sys
@@ -19,7 +23,12 @@ import logging
 
 from pyverilog.vparser import parser as vparser
 from pyverilog.ast_code_generator.codegen import ASTCodeGenerator
+
 from bsg_ast_walk_and_swap_inplace import ast_walk_and_swap_inplace 
+from bsg_ast_wire_reg_decl_opt_inplace import ast_wire_reg_decl_opt_inplace
+
+# Update recursion depth (default 1000)
+sys.setrecursionlimit(1500)
 
 ### Setup the argument parsing
 
@@ -34,6 +43,11 @@ parser = argparse.ArgumentParser(description=desc)
 parser.add_argument('-i',      metavar='file',                     dest='infile',    required=True,  type=str, help='Input file')
 parser.add_argument('-o',      metavar='file',                     dest='outfile',   required=True,  type=str, help='Output file')
 parser.add_argument('-loglvl', choices=log_levels, default='info', dest='log_level', required=False, type=str, help='Set the logging level')
+
+# Turn on/off optimization passes
+wire_reg_decl_opt_help = 'Prevent the wire and reg declaration optimization pass.'
+parser.add_argument('-no_wire_reg_decl_opt', dest='wire_reg_decl_opt', action='store_false', help=wire_reg_decl_opt_help)
+
 args = parser.parse_args()
 
 ### Configure the logger
@@ -58,6 +72,13 @@ logging.info('Total Number of Replacements = %d' % total)
 logging.info("\t GTECH swap Count: %d (%d%%)" % (gtech, (gtech/total)*100))
 logging.info("\t SYNTHETIC swap Count: %d (%d%%)" % (synth, (synth/total)*100))
 logging.info("\t SEQGEN swap Count: %d (%d%%)" % (seqgen, (seqgen/total)*100))
+
+### Perform various optimization passes
+
+# Wire / Reg Declartion Optimization
+if args.wire_reg_decl_opt:
+  logging.info('Performing wire/reg declartion optimizations.')
+  ast_wire_reg_decl_opt_inplace( ast )
 
 ### Output RTL
 

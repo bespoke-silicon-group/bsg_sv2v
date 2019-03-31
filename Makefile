@@ -92,10 +92,16 @@ synth:
 	$(eval -include $(DESIGN_DIRECTORIES_MK))
 	$(DC_SHELL) -64bit -f $(TOP_DIR)/scripts/tcl/run_dc.tcl 2>&1 | tee -i $(OUTPUT_DIR)/$(DESIGN_NAME).synth.log
 
+SV2V_OPTIONS := -loglvl $(LOGLVL)
+#SV2V_OPTIONS += -no_wire_reg_decl_opt
+
 elab_to_rtl:
 	mkdir -p $(OUTPUT_DIR)
 	$(eval -include $(DESIGN_DIRECTORIES_MK))
-	$(PYTHON) $(TOP_DIR)/scripts/py/bsg_elab_to_rtl.py -i $(OUTPUT_ELAB_FILE) -o $(OUTPUT_SV2V_FILE) -loglvl $(LOGLVL) 2>&1 | tee -i $(OUTPUT_DIR)/$(DESIGN_NAME).elab_to_rtl.log
+	$(PYTHON) $(TOP_DIR)/scripts/py/bsg_elab_to_rtl.py -i $(OUTPUT_ELAB_FILE) -o $(OUTPUT_SV2V_FILE) $(SV2V_OPTIONS) 2>&1 | tee -i $(OUTPUT_DIR)/$(DESIGN_NAME).elab_to_rtl.log
+
+help:
+	$(PYTHON) $(TOP_DIR)/scripts/py/bsg_elab_to_rtl.py -h
 
 #===============================================================================
 # TOOLS
