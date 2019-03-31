@@ -10,7 +10,7 @@ into RTL.
 import inspect
 import logging
 
-from pyverilog.vparser import ast
+from pyverilog.vparser.ast import *
 
 import bsg_gtech_modules
 import bsg_synthetic_modules
@@ -45,7 +45,7 @@ def ast_walk_and_swap_inplace( node ):
   seqgen_swap_count    = 0
 
   ### Handle module definitions
-  if type(node) == ast.ModuleDef:
+  if type(node) == ModuleDef:
     
     number_of_items      = len(node.items)
 
@@ -61,20 +61,20 @@ def ast_walk_and_swap_inplace( node ):
     for item in node.items:
 
       # If the item is a declaration
-      if type(item) == ast.Decl:
+      if type(item) == Decl:
         for d in item.list:
 
           # Explict wire declaration for output ports
-          if type(d) == ast.Output:
-            wires.append(ast.Wire(d.name, d.width, d.signed))
+          if type(d) == Output:
+            wires.append(Wire(d.name, d.width, d.signed))
 
           # Split all decl
-          if type(d) == ast.Wire: wires.append(d)
-          else:                   ports.append(d)
+          if type(d) == Wire: wires.append(d)
+          else:               ports.append(d)
 
       # If the item is an instance list. For elaborated netlist, every instance
       # list has exactly 1 instantiation.
-      elif type(item) == ast.InstanceList:
+      elif type(item) == InstanceList:
 
         assert len(item.instances) == 1   ;# Assert our assumptions are true
 
@@ -117,9 +117,9 @@ def ast_walk_and_swap_inplace( node ):
     logging.info("\t SEQGEN swap Count: %d (%d%%)" % (seqgen_swap_count, (seqgen_swap_count/number_of_items)*100))
 
     # Compose a new items list for the module definition
-    node.items = [ast.Decl([p]) for p in ports if p]   \
-                 + [ast.Decl([w]) for w in wires if w] \
-                 + [ast.Decl([r]) for r in regs if r]  \
+    node.items = [Decl([p]) for p in ports if p]   \
+                 + [Decl([w]) for w in wires if w] \
+                 + [Decl([r]) for r in regs if r]  \
                  + [a for a in asts if a]
 
   ### Recursivly walk down all other nodes
