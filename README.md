@@ -120,3 +120,26 @@ To see the converted file, run:
 ```
 $ cat ./results/gcd.sv2v.v
 ```
+
+### Log Level
+
+The `bsg_elab_to_rtl.py` script logs various information throughout the process
+of converting the DC elaborated netlist to RTL. By default, the logger level is
+set to `info` however you can change the log level. Available options are `debug`,
+`info`,`warning`,`error`, and `critical`. Inside of the Makefile, you can set the
+`LOGLVL` variable to the logging level desired.
+
+### Optimization Passes
+
+As part of the BSG SV2V flow, after all components have been swapped with their RTL
+equivalents, additional passes of the netlist are performed to try and cleanup and
+optimize the netlist. By default, every optimization pass is enabled, however every
+optimization pass can be disabled using flags passed to the `bsg_elab_to_rtl.py`
+script. In the Makefile, you can add these flags to the `SV2V_OPTIONS` variable to
+disable these optimizations.
+
+| Optimization Name    | Disable Flag           | Description                                                                                                        |
+|:--------------------:|:----------------------:|:-------------------------------------------------------------------------------------------------------------------|
+| Wire/Reg Declaration | no_wire_reg_decl_opt   | Takes individual wire and reg declarations and combines them into comma separated multi-variable declarations.     |
+| Always@ Reduction    | no_always_at_redux_opt | Squashes always@ blocks based on sensitivity lists and conditional statements.                                     |
+| Concat Reduction     | no_concat_redux_opt    | Squashes bits in large concats that share the same base bus name.                                                  |
