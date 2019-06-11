@@ -95,7 +95,7 @@ convert_sv2v: synth elab_to_rtl
 synth:
 	mkdir -p $(OUTPUT_DIR)
 	$(eval -include $(DESIGN_DIRECTORIES_MK))
-	$(DC_SHELL) -64bit -f $(TOP_DIR)/scripts/tcl/run_dc.tcl 2>&1 | tee -i $(OUTPUT_DIR)/$(DESIGN_NAME).synth.log
+	set -o pipefail; $(DC_SHELL) -64bit -f $(TOP_DIR)/scripts/tcl/run_dc.tcl 2>&1 | tee -i $(OUTPUT_DIR)/$(DESIGN_NAME).synth.log
 
 elab_to_rtl:
 	mkdir -p $(OUTPUT_DIR)
