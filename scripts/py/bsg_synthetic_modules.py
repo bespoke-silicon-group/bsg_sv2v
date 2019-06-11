@@ -12,6 +12,7 @@ ERROR will be thrown.
 import sys
 import logging
 from pyverilog.vparser.ast import *
+from bsg_utility_funcs import __get_instance_ports
 
 # Unsigned addition operation
 def ADD_UNS_OP( instance ):
@@ -290,16 +291,4 @@ def SRA_UNS_OP( instance ):
 def SRA_TC_OP( instance ):
   logging.error('No implementation defined for %s replacement!' % sys._getframe().f_code.co_name)
   return InstanceList(instance.module, [], [instance])
-
-################################################################################
-# Utility function that get's all the ports from an instance and creates a
-# simple dictionary where the key is the name of the port and the value is the
-# AST for that port.
-################################################################################
-
-def __get_instance_ports( instance ):
-  ports = {}
-  for port in instance.portlist:
-    ports[port.portname] = port.argname
-  return ports
 
