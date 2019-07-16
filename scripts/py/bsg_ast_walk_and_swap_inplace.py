@@ -3,7 +3,7 @@ ast_walk_and_swap_inplace.py
 
 This file contains the ast_walk_and_swap_inplace function which recursivly
 walks through an AST and performs any modifications that we need. The main
-modification is the replacement of GTECH, SYNTHETIC and SEQGEN instances back
+modification is the replacement of GTECH, SYNTHETIC and GENERIC instances back
 into RTL.
 '''
 
@@ -14,12 +14,12 @@ from pyverilog.vparser.ast import *
 
 import bsg_gtech_modules
 import bsg_synthetic_modules
-import bsg_seqgen_modules
+import bsg_generic_modules
 
 # Small utility function that helps generate a dictionary with all of the
 # functions found in an imported module. This function is used to generate 3
 # dicts that hold all of the replacement functions for GTECH, SYNTHETIC and
-# SEQGEN modules. All utility functions begin with __ so they should not
+# GENERIC modules. All utility functions begin with __ so they should not
 # collide with any module instances found inside the converted verilog.
 def get_all_functions( module ):
   funcs = dict()
@@ -30,19 +30,19 @@ def get_all_functions( module ):
 
 gtech_modules_funcs     = get_all_functions( bsg_gtech_modules )
 synthetic_modules_funcs = get_all_functions( bsg_synthetic_modules )
-seqgen_modules_funcs    = get_all_functions( bsg_seqgen_modules )
+generic_modules_funcs   = get_all_functions( bsg_generic_modules )
 
 # ast_walk_and_swap_inplace
 #
 # This function recursivly walks through an AST and performs any modifications
 # that we need. These modifications happen in-place (ie. it will modify the AST
 # that is passed in and doesn't return a new one). The main modification is
-# replacing GTECH, SYNTHETIC and SEQGEN constructrs for synthesizable RTL.
+# replacing GTECH, SYNTHETIC and GENERIC constructrs for synthesizable RTL.
 def ast_walk_and_swap_inplace( node ):
 
   gtech_swap_count     = 0
   synthetic_swap_count = 0
-  seqgen_swap_count    = 0
+  generic_swap_count   = 0
 
   ### Handle module definitions
   if type(node) == ModuleDef:
@@ -94,11 +94,11 @@ def ast_walk_and_swap_inplace( node ):
           synthetic_swap_count += 1
           asts.append(synthetic_modules_funcs[modname]( instance ))
 
-        # Perform a SEQGEN cell replacement
-        elif modname in seqgen_modules_funcs:
-          logging.debug("\t SEQGEN replacement found -- %s, line: %d" % (modname, modline))
-          seqgen_swap_count += 1
-          asts.append(seqgen_modules_funcs[modname]( instance, wires, regs ))
+        # Perform a GENERIC cell replacement
+        elif modname in generic_modules_funcs:
+          logging.debug("\t GENERIC replacement found -- %s, line: %d" % (modname, modline))
+          generic_swap_count += 1
+          asts.append(generic_modules_funcs[modname]( instance, wires, regs ))
 
         # Instance not found in replacement lists (either a DesignCompiler
         # construct we don't know about or a module that is defined earlier in
@@ -114,7 +114,7 @@ def ast_walk_and_swap_inplace( node ):
     # Log some statistics
     logging.info("\t GTECH swap Count: %d (%d%%)" % (gtech_swap_count, (gtech_swap_count/number_of_items)*100))
     logging.info("\t SYNTHETIC swap Count: %d (%d%%)" % (synthetic_swap_count, (synthetic_swap_count/number_of_items)*100))
-    logging.info("\t SEQGEN swap Count: %d (%d%%)" % (seqgen_swap_count, (seqgen_swap_count/number_of_items)*100))
+    logging.info("\t GENERIC swap Count: %d (%d%%)" % (generic_swap_count, (generic_swap_count/number_of_items)*100))
 
     # Compose a new items list for the module definition
     node.items = [Decl([p]) for p in ports if p]   \
@@ -125,10 +125,10 @@ def ast_walk_and_swap_inplace( node ):
   ### Recursivly walk down all other nodes
   else:
     for c in node.children():
-      (gtech,synth,seqgen) = ast_walk_and_swap_inplace(c)
+      (gtech,synth,generic) = ast_walk_and_swap_inplace(c)
       gtech_swap_count     += gtech
       synthetic_swap_count += synth
-      seqgen_swap_count    += seqgen
+      generic_swap_count   += generic
 
-  return (gtech_swap_count, synthetic_swap_count, seqgen_swap_count)
+  return (gtech_swap_count, synthetic_swap_count, generic_swap_count)
 

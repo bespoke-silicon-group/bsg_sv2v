@@ -78,15 +78,17 @@ ast, directives = vparser.parse([args.infile])
 ### Walk the AST and replace DesignCompiler constructs with RTL
 
 logging.info('Performing AST replacements.')
-(gtech, synth, seqgen) = ast_walk_and_swap_inplace( ast )
-total = gtech + synth + seqgen
+(gtech, synth, generics) = ast_walk_and_swap_inplace( ast )
+total = gtech + synth + generics
 if total == 0:
-  logging.info('No GTECH, SYNTHETIC, or SEQGEN instances found!')
+  logging.info('No GTECH, SYNTHETIC, or GENERICS instances found!')
 else:
   logging.info('Total Number of Replacements = %d' % total)
   logging.info("\t GTECH swap Count: %d (%d%%)" % (gtech, (gtech/total)*100))
   logging.info("\t SYNTHETIC swap Count: %d (%d%%)" % (synth, (synth/total)*100))
-  logging.info("\t SEQGEN swap Count: %d (%d%%)" % (seqgen, (seqgen/total)*100))
+  logging.info("\t GENERICS swap Count: %d (%d%%)" % (generics, (generics/total)*100))
+
+### Perform various optimization passes
 
 # Wire / Reg Declartion Optimization
 if args.wire_reg_decl_opt:
