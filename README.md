@@ -15,6 +15,8 @@ This approach maximizes compatibility with code that was written and targets
 DC. Of course it would also be neat if somebody wrote a totally open source SV
 to V!
 
+Here is a [Youtube Demo](https://youtu.be/H3p5hwI8WR0)
+
 ## Setup
 
 For this converter, you will need Synopsys Design Compiler installed (verified
