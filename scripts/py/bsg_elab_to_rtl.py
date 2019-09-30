@@ -34,6 +34,8 @@ from bsg_ast_wire_reg_decl_opt_inplace import ast_wire_reg_decl_opt_inplace
 from bsg_ast_always_at_redux_opt_inplace import ast_always_at_redux_opt_inplace
 from bsg_ast_concat_redux_opt_inplace import ast_concat_redux_opt_inplace
 
+from bsg_ast_add_wrapper_inplace import ast_add_wrapper_inplace
+
 # Update recursion depth (default 1000)
 sys.setrecursionlimit(1500)
 
@@ -50,6 +52,8 @@ parser = argparse.ArgumentParser(description=desc)
 parser.add_argument('-i',      metavar='file',                     dest='infile',    required=True,  type=str, help='Input file')
 parser.add_argument('-o',      metavar='file',                     dest='outfile',   required=True,  type=str, help='Output file')
 parser.add_argument('-loglvl', choices=log_levels, default='info', dest='log_level', required=False, type=str, help='Set the logging level')
+
+parser.add_argument('-wrapper', metavar='name', dest='wrapper', required=False, type=str, help='Toplevel Wrapper Name')
 
 # Turn on/off optimization passes
 parser.add_argument('-no_wire_reg_decl_opt',   dest='wire_reg_decl_opt',   action='store_false', help='Prevent the wire and reg declaration optimization pass.')
@@ -84,10 +88,6 @@ else:
   logging.info("\t SYNTHETIC swap Count: %d (%d%%)" % (synth, (synth/total)*100))
   logging.info("\t SEQGEN swap Count: %d (%d%%)" % (seqgen, (seqgen/total)*100))
 
-### Perform seqgen redux optimization pass
-
-### Perform various optimization passes
-
 # Wire / Reg Declartion Optimization
 if args.wire_reg_decl_opt:
   logging.info('Performing wire/reg declartion optimizations.')
@@ -108,6 +108,10 @@ if args.concat_redux_opt:
   ast_concat_redux_opt_inplace( ast )
 else:
   logging.info('Concatination reduction optimizations have been disabled.')
+
+# Add toplevel wrapper
+if args.wrapper:
+  ast_add_wrapper_inplace( ast, None, args.wrapper )
 
 ### Output RTL
 

@@ -41,11 +41,11 @@ export DC_SHELL ?=
 # find and link all of the files.
 #===============================================================================
 
-export DESIGN_NAME :=gcd
+export DESIGN_NAME ?=gcd
 
-export DESIGN_FILELIST :=$(TOP_DIR)/examples/gcd/gcd.flist
+export DESIGN_FILELIST ?=$(TOP_DIR)/examples/gcd/gcd.flist
 
-export DESIGN_DIRECTORIES_MK :=
+export DESIGN_DIRECTORIES_MK ?=
 
 #===============================================================================
 # ADDITIONAL TOOL SETUP
@@ -75,20 +75,21 @@ export PATH:=$(PATH):$(IVERILOG_BUILD_DIR)/install/bin
 
 .DEFAULT_GOAL=convert_sv2v
 
-export OUTPUT_DIR       :=$(CURDIR)/results
-export OUTPUT_ELAB_FILE :=$(OUTPUT_DIR)/$(DESIGN_NAME).elab.v
-export OUTPUT_SV2V_FILE :=$(OUTPUT_DIR)/$(DESIGN_NAME).sv2v.v
+export OUTPUT_DIR       ?=$(CURDIR)/results
+export OUTPUT_ELAB_FILE ?=$(OUTPUT_DIR)/$(DESIGN_NAME).elab.v
+export OUTPUT_SV2V_FILE ?=$(OUTPUT_DIR)/$(DESIGN_NAME).sv2v.v
 
-#LOGLVL:=debug
-LOGLVL:=info
-#LOGLVL:=warning
-#LOGLVL:=error
-#LOGLVL:=critical
+#LOGLVL?=debug
+LOGLVL?=info
+#LOGLVL?=warning
+#LOGLVL?=error
+#LOGLVL?=critical
 
-SV2V_OPTIONS := -loglvl $(LOGLVL)
+SV2V_OPTIONS ?= -loglvl $(LOGLVL)
 #SV2V_OPTIONS += -no_wire_reg_decl_opt
 #SV2V_OPTIONS += -no_always_at_redux_opt
 #SV2V_OPTIONS += -no_concat_redux_opt
+#SV2V_OPTIONS += -wrapper bsg_top
 
 convert_sv2v: synth elab_to_rtl
 
