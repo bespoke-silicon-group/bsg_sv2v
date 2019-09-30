@@ -145,3 +145,14 @@ disable these optimizations.
 | Wire/Reg Declaration | no_wire_reg_decl_opt   | Takes individual wire and reg declarations and combines them into comma separated multi-variable declarations.     |
 | Always@ Reduction    | no_always_at_redux_opt | Squashes always@ blocks based on sensitivity lists and conditional statements.                                     |
 | Concat Reduction     | no_concat_redux_opt    | Squashes bits in large concats that share the same base bus name.                                                  |
+
+### Adding Wrapper Module
+
+BSG SV2V supports adding a wrapper module for the toplevel by using the
+optional `-wrapper <name>` flag (where `<name>` is the wrapper module name).
+This can be useful when using BSG SV2V in other infrastructure where you would
+like to control the toplevel module name. To determine which module is the
+toplevel that should be wrapper, the user must define the `DESIGN_NAME`
+environment variable. You can also add the `-wrapper` flag to the
+`SV2V_OPTIONS` variable inside the Makefile.
+
