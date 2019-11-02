@@ -74,7 +74,7 @@ if { ![analyze -format sverilog -define $bsg_macros [join $bsg_filelist]] } {
 ### Perform elaboration
 
 if { ![elaborate -param [join $bsg_params ","] $DESIGN_NAME] } {
-  exit 2
+  exit 1
 }
 
 ### Rename the design if it was modified from parameter
