@@ -1,5 +1,8 @@
 export TOP_DIR :=$(shell git rev-parse --show-toplevel)
 
+# Explicitly use bash so we can use the pipefail feature
+SHELL :=/bin/bash
+
 #===============================================================================
 # CAD TOOL SETUP
 #
