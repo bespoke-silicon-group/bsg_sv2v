@@ -67,11 +67,15 @@ set_app_var search_path "$search_path [join $bsg_incdirs]"
 ### Perform analysis
 
 define_design_lib WORK -path $OUTPUT_DIR/${DESIGN_NAME}_WORK
-analyze -format sverilog -define $bsg_macros [join $bsg_filelist]
+if { ![analyze -format sverilog -define $bsg_macros [join $bsg_filelist]] } {
+  exit 1
+}
 
 ### Perform elaboration
 
-elaborate -param [join $bsg_params ","] $DESIGN_NAME
+if { ![elaborate -param [join $bsg_params ","] $DESIGN_NAME] } {
+  exit 1
+}
 
 ### Rename the design if it was modified from parameter
 
@@ -89,5 +93,5 @@ write_file -format verilog -hier -output $OUTPUT_FILE
 
 ### Finished!
 
-exit
+exit 0
 
