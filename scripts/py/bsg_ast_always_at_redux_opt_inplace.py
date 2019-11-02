@@ -19,7 +19,7 @@ from pyverilog.vparser.ast import *
 # ast_always_at_redux_opt_inplace( node )
 #
 # Main optimization pass. This will go through the whole AST and find always
-# blocks from seqgen cells. It will combine sensitivity lists and if-statements
+# blocks from SEQGEN cells. It will combine sensitivity lists and if-statements
 # within an always block. It will then try and reduce the block complexity
 # inside each if-statement case by collapsing non-blocking assignments to the
 # same bus into a single non-blocking assignment with a concat on the left and
@@ -97,7 +97,7 @@ def __merge_if_statements( ifstmt1, ifstmt2 ):
   else:
     merged_false = None
 
-  # Merge true case (for seqgen true statement will not be a nested if)
+  # Merge true case (for SEQGEN true statement will not be a nested if)
   if type(ifstmt1.true_statement) == IfStatement:
     merged_true = __merge_if_statements(ifstmt1.true_statement, ifstmt2.true_statement)
   elif ifstmt1.true_statement:
@@ -130,7 +130,7 @@ def __if_statement_eq( ifstmt1, ifstmt2 ):
     if not type(ifstmt1.false_statement) == type(ifstmt2.false_statement):
       return False
 
-  # Check true case (for seqgen true statement will not be a nested if)
+  # Check true case (for SEQGEN true statement will not be a nested if)
   if type(ifstmt1.true_statement) == IfStatement and type(ifstmt2.true_statement) == IfStatement:
     if not __if_statement_eq(ifstmt1.true_statement, ifstmt2.true_statement):
       return False

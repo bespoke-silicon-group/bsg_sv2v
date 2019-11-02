@@ -1,12 +1,12 @@
 '''
-bsg_seqgen_modules.py
+bsg_generic_modules.py
 
 This file contains the replacement functioun for generic sequential cells that
 DesignCompiler will use for elaboration. During the conversion phase, if a
-SEQGEN cell is found, the instance will be replaced with the AST returned from
-the SEQGEN function. The configuration of the SEQGEN cell is determined based
-on if the ports are tied low. Not every configuration has been implemented. If
-an unknown configuration is found, and ERROR is logged.
+generic cell is found, the instance will be replaced with the AST returned from
+the generic's function. For SEQGEN, the configuration is determined based on if
+the ports are tied low. Not every configuration has been implemented. If an
+unknown configuration is found, and ERROR is logged.
 '''
 
 import sys
@@ -123,4 +123,10 @@ def SEQGEN( instance, wires, regs ):
 
   # Return always block AST
   return Always(SensList(sens), stmt if type(stmt) == Block else Block([stmt]))
+
+# generic tristate cell
+def TSGEN( instance, wires, regs ):
+  p = __get_instance_ports(instance)
+  rval = Cond(p['three_state'], IntConst('1\'bz'), p['function'])
+  return Assign(Lvalue(p['output']), Rvalue(rval))
 

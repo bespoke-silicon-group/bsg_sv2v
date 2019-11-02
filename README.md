@@ -7,7 +7,7 @@ bridge the gap between code bases employing advanced synthesizable
 SystemVerilog features and older or less sophisticated tools.
 
 The tool uses Synopsys Design Compiler (DC) to perform elaboration of the
-design, and then post-processes to map DC's gtech/seqgen/datapath
+design, and then post-processes to map DC's gtech/generic/datapath
 representation back to standard Verilog. Thus a DC license is required by the
 party running the tool, but is not required to use the converted file.
 
