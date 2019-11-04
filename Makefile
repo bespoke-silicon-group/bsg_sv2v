@@ -50,6 +50,8 @@ export DESIGN_FILELIST ?=$(TOP_DIR)/examples/gcd/gcd.flist
 
 export DESIGN_DIRECTORIES_MK ?=
 
+export DESIGN_CONSTRAINTS_FILE ?=
+
 #===============================================================================
 # ADDITIONAL TOOL SETUP
 #

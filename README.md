@@ -156,3 +156,18 @@ toplevel that should be wrapper, the user must define the `DESIGN_NAME`
 environment variable. You can also add the `-wrapper` flag to the
 `SV2V_OPTIONS` variable inside the Makefile.
 
+### Converting Timing Constraints
+
+BSG SV2V can also take an optional tcl or sdc file that will then be applied to
+the design and written back out as an SDC file that has been fully expanded to
+the given design (for example: if the folloing timing constraint is applied:
+`set_output_delay 10 -clock clk [all_outputs]` the the resulting output SDC
+file will expand that constraint such that every output port for the design has
+a `set_output_delay` command. To specify a constraint file to convert, set the
+`DESIGN_CONSTRAINTS_FILE` variable inside the Makefile or set the variable at
+runtime using the following syntax:
+
+```
+$ make convert_sv2v DESIGN_CONSTRAINTS_FILE=<file path>
+```
+
