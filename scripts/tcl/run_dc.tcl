@@ -87,9 +87,25 @@ if { [get_object_name [get_designs ${DESIGN_NAME}*]] != $DESIGN_NAME } {
 
 change_names -hier -rules verilog
 
+### Read in the constraints file if it exists
+
+if {[file exists $::env(DESIGN_CONSTRAINTS_FILE)]} {
+	if {[file extension $::env(DESIGN_CONSTRAINTS_FILE)] == ".sdc"} {
+		read_sdc -echo $::env(DESIGN_CONSTRAINTS_FILE)
+	} else {
+		source -echo -verbose $::env(DESIGN_CONSTRAINTS_FILE)
+	}
+}
+
 ### Output the elaborated netlist
 
 write_file -format verilog -hier -output $OUTPUT_FILE
+
+### Output the sdc constraints
+
+if {[file exists $::env(DESIGN_CONSTRAINTS_FILE)]} {
+  write_sdc -nosplit $OUTPUT_FILE.sdc
+}
 
 ### Finished!
 
