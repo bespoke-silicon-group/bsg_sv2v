@@ -135,7 +135,7 @@ $(PYPY3_BUILD_DIR):
 
 $(VIRTUALENV_BUILD_DIR): $(PYPY3_BUILD_DIR)
 	mkdir -p $(@D)
-	virtualenv -p $(PYPY3_BUILD_DIR)/bin/pypy3 $@
+	$(PYPY3_BUILD_DIR)/bin/virtualenv-pypy -p $(PYPY3_BUILD_DIR)/bin/pypy3 $@
 	$(PIP) install jinja2 pytest pytest-pythonpath
 
 $(PYVERILOG_BUILD_DIR): $(VIRTUALENV_BUILD_DIR) $(IVERILOG_BUILD_DIR)
