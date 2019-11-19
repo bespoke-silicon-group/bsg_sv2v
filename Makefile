@@ -52,6 +52,8 @@ export DESIGN_DIRECTORIES_MK ?=
 
 export DESIGN_CONSTRAINTS_FILE ?=
 
+export DESIGN_ELAB_NAME ?=$(DESIGN_NAME)
+
 #===============================================================================
 # ADDITIONAL TOOL SETUP
 #

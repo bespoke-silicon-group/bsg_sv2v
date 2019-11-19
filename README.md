@@ -171,3 +171,22 @@ runtime using the following syntax:
 $ make convert_sv2v DESIGN_CONSTRAINTS_FILE=<file path>
 ```
 
+### Elaborating a Different Top-level Module
+
+When dealing with hierarchical designs, it can some be useful to elaborate the
+design higher up the logical hierarchy than the point that you are acutally
+interested in (ie. the design being converted). This is primarily useful to
+push parameters from higher up the hierarchy. To specify a different point to
+elaborate, set the `DESIGN_ELAB_NAME` variable inside the Makefile or set the
+variable at runtime using the following syntax:
+
+```
+$ make convert_sv2v DESIGN_ELAB_NAME=<hier name>
+```
+
+Note: the point that you elaborate from must instantiate an instance of the
+`DESIGN_NAME` module. Said another way, it must be higher up the local
+hierarchy. Also, every instances of `DESIGN_NAME` must have the same
+parameterization as there is no way to disambiguous which parameterization you
+are interested in converting.
+

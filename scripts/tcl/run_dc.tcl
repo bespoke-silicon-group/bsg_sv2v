@@ -7,10 +7,11 @@
 
 ### Grab required ENV variables for the flow
 
-set DESIGN_NAME     $::env(DESIGN_NAME)       ;# Top-level module
-set DESIGN_FILELIST $::env(DESIGN_FILELIST)   ;# Filelist path
-set OUTPUT_DIR      $::env(OUTPUT_DIR)        ;# Output directory
-set OUTPUT_FILE     $::env(OUTPUT_ELAB_FILE)  ;# Output filename
+set DESIGN_NAME      $::env(DESIGN_NAME)       ;# Top-level module
+set DESIGN_FILELIST  $::env(DESIGN_FILELIST)   ;# Filelist path
+set DESIGN_ELAB_NAME $::env(DESIGN_ELAB_NAME)  ;# Design name to elaborate
+set OUTPUT_DIR       $::env(OUTPUT_DIR)        ;# Output directory
+set OUTPUT_FILE      $::env(OUTPUT_ELAB_FILE)  ;# Output filename
 
 ### Application setup
 
@@ -73,15 +74,33 @@ if { ![analyze -format sverilog -define $bsg_macros [join $bsg_filelist]] } {
 
 ### Perform elaboration
 
-if { ![elaborate -param [join $bsg_params ","] $DESIGN_NAME] } {
+if { $DESIGN_ELAB_NAME == "" } {
+    set DESIGN_ELAB_NAME $DESIGN_NAME
+}
+
+if { ![elaborate -param [join $bsg_params ","] $DESIGN_ELAB_NAME] } {
   exit 1
 }
 
-### Rename the design if it was modified from parameter
+### Rename and set the real top-level design
 
-if { [get_object_name [get_designs ${DESIGN_NAME}*]] != $DESIGN_NAME } {
-  rename_design [get_designs ${DESIGN_NAME}*] $DESIGN_NAME
+if { [sizeof_collection [get_designs -quiet $DESIGN_NAME]] == 0 } {
+  set designs [get_designs -quiet -filter "@hdl_template == $DESIGN_NAME"]
+  if { [sizeof_collection $designs] > 1 } {
+    puts "Error: Toplevel design has multiple instances post-elaboration. This"
+    puts "usually indicates that there are multiple parameterizations of the design."
+    puts "This flow does not support different parameterizations of the top-level"
+    puts "compile target, consider using a wrapper to uniqify the hierarchy for each"
+    puts "parameter."
+    exit 1
+  } else {
+    rename_design $designs $DESIGN_NAME
+  }
 }
+
+### Make suer the current design is correct
+
+current_design $DESIGN_NAME
 
 ### Cleanup some of the netlist
 
