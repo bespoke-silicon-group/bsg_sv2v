@@ -122,7 +122,7 @@ tools: $(IVERILOG_BUILD_DIR) $(PYPY3_BUILD_DIR) $(VIRTUALENV_BUILD_DIR) $(PYVERI
 $(IVERILOG_BUILD_DIR):
 	mkdir -p $(@D)
 	git clone git://github.com/steveicarus/iverilog.git $@
-	cd $@; git checkout v10_2
+	cd $@; git checkout v10_3
 	cd $@; sh autoconf.sh
 	cd $@; ./configure --prefix=$@/install
 	cd $@; make -j4
