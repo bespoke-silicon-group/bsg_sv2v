@@ -15,12 +15,14 @@ set OUTPUT_FILE      $::env(OUTPUT_ELAB_FILE)  ;# Output filename
 
 ### Application setup
 
-set_svf -off                                              ;# No need to svf file (for fomality)
-set_app_var link_library        ""                        ;# Empty link library
-set_app_var target_library      "*"                       ;# Default target library
-set_app_var hdlin_infer_mux     none                      ;# Use SELCT_OP over MUX_OP synthetic module
-set_app_var sh_command_log_file $OUTPUT_DIR/command.log   ;# Redirect command.log file
-set_app_var verilogout_no_tri   true                      ;# Make unknown port connections wires not tris
+set_svf -off                                                           ;# No need to svf file (for fomality)
+set_app_var link_library                     ""                        ;# Empty link library
+set_app_var target_library                   "*"                       ;# Default target library
+set_app_var hdlin_infer_mux                  none                      ;# Use SELCT_OP over MUX_OP synthetic module
+set_app_var sh_command_log_file              $OUTPUT_DIR/command.log   ;# Redirect command.log file
+set_app_var verilogout_no_tri                true                      ;# Make unknown port connections wires not tris
+#set_app_var hdlin_ff_always_sync_set_reset  true
+#set_app_var hdlin_ff_always_async_set_reset false
 
 ### Read in the filelist
 
@@ -104,7 +106,14 @@ current_design $DESIGN_NAME
 
 ### Cleanup some of the netlist
 
-change_names -hier -rules verilog
+define_name_rules rules \
+  -special verilog \
+  -dummy_net_prefix "sv2v_dc_%d" \
+  -flatten_multi_dimension_busses \
+  -remove_irregular_net_bus \
+  -remove_irregular_port_bus \
+  -restricted {!@#$%^&*()\\-[]}
+change_names -hier -rules rules
 
 ### Read in the constraints file if it exists
 
