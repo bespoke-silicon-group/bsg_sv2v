@@ -74,6 +74,12 @@ def SEQGEN( instance, wires, regs, assigns ):
   elif has_async_reset: RESET = p['clear']
   else:                 RESET = None
 
+  # Special case, it seems that async reset can be represented with a
+  # sync_enable tied hi and async enable tied lo.
+  if has_async_enable and sync_enable_hi:
+    EN    = None
+    RESET = p['enable']
+
   # SET pin
   if has_sync_set:    SET = p['synch_preset']
   elif has_async_set: SET = p['preset']
