@@ -21,8 +21,8 @@ set_app_var target_library                   "*"                       ;# Defaul
 set_app_var hdlin_infer_mux                  none                      ;# Use SELCT_OP over MUX_OP synthetic module
 set_app_var sh_command_log_file              $OUTPUT_DIR/command.log   ;# Redirect command.log file
 set_app_var verilogout_no_tri                true                      ;# Make unknown port connections wires not tris
-#set_app_var hdlin_ff_always_sync_set_reset  true
-#set_app_var hdlin_ff_always_async_set_reset false
+set_app_var hdlin_ff_always_sync_set_reset   true                      ;# Try to infer synchronous set/reset logic
+set_app_var hdlin_ff_always_async_set_reset  false                     ;# Don't try to infer asynchronous set/reset logic
 
 ### Read in the filelist
 

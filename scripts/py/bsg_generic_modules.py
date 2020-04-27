@@ -33,6 +33,8 @@ def SEQGEN( instance, wires, regs, assigns ):
   has_noninverted_output = ('Q' in p)
   has_inverted_output    = ('QN' in p)
 
+  sync_enable_hi         = (p['synch_enable'] == IntConst('1\'b1'))
+
   # Log configuration
   logging.debug('SEQGEN Configuration:')
   logging.debug(('\t %s: '+('\t'*3)+'%s') % ('has_clock', str(has_clock)))
@@ -51,7 +53,7 @@ def SEQGEN( instance, wires, regs, assigns ):
   # Assert all assumptions before moving on to early catch unexpected configurations
   assert not ( has_async_reset and has_sync_reset )
   assert not ( has_async_set and has_sync_set )
-  assert not ( has_async_enable and has_sync_enable )
+  assert not ( has_async_enable and has_sync_enable and (not sync_enable_hi) )
   assert not ( has_async_data and has_sync_data )
   assert not ( has_clock and has_async_data )
   assert (has_noninverted_output or has_inverted_output)
