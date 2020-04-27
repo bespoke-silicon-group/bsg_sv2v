@@ -104,11 +104,15 @@ synth:
 	mkdir -p $(OUTPUT_DIR)
 	$(eval -include $(DESIGN_DIRECTORIES_MK))
 	set -o pipefail; $(DC_SHELL) -64bit -f $(TOP_DIR)/scripts/tcl/run_dc.tcl 2>&1 | tee -i $(OUTPUT_DIR)/$(DESIGN_NAME).synth.log
+	touch $(OUTPUT_DIR)/$(DESIGN_NAME).elab.v.sdc
 
 elab_to_rtl:
 	mkdir -p $(OUTPUT_DIR)
 	$(eval -include $(DESIGN_DIRECTORIES_MK))
 	$(PYTHON) $(TOP_DIR)/scripts/py/bsg_elab_to_rtl.py -i $(OUTPUT_ELAB_FILE) -o $(OUTPUT_SV2V_FILE) $(SV2V_OPTIONS) 2>&1 | tee -i $(OUTPUT_DIR)/$(DESIGN_NAME).elab_to_rtl.log
+	cp $(OUTPUT_DIR)/$(DESIGN_NAME).elab.v.sdc $(OUTPUT_DIR)/$(DESIGN_NAME).sv2v.v.sdc
+	sed -i -e 's/^#.*$$//g' $(OUTPUT_DIR)/$(DESIGN_NAME).sv2v.v.sdc
+	sed -i -e '/^$$/d' $(OUTPUT_DIR)/$(DESIGN_NAME).sv2v.v.sdc
 
 help:
 	$(PYTHON) $(TOP_DIR)/scripts/py/bsg_elab_to_rtl.py -h
@@ -122,7 +126,7 @@ tools: $(IVERILOG_BUILD_DIR) $(PYPY3_BUILD_DIR) $(VIRTUALENV_BUILD_DIR) $(PYVERI
 $(IVERILOG_BUILD_DIR):
 	mkdir -p $(@D)
 	git clone git://github.com/steveicarus/iverilog.git $@
-	cd $@; git checkout v10_2
+	cd $@; git checkout v10_3
 	cd $@; sh autoconf.sh
 	cd $@; ./configure --prefix=$@/install
 	cd $@; make -j4

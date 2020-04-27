@@ -55,6 +55,7 @@ def ast_walk_and_swap_inplace( node ):
     ports = list()  ;# List of all port declarations (input and output statements)
     wires = list()  ;# List of all wire datatype declarations
     regs = list()   ;# List of all reg datatype declarations
+    assigns = list();# List of all new assigns to add to the ast
     asts = list()   ;# All other ast inside the module (everything else)
 
     # Go through every AST inside the module definition
@@ -69,8 +70,11 @@ def ast_walk_and_swap_inplace( node ):
             wires.append(Wire(d.name, d.width, d.signed))
 
           # Split all decl
-          if type(d) == Wire: wires.append(d)
-          else:               ports.append(d)
+          if type(d) == Wire:
+            if d not in wires:
+              wires.append(d)
+          else:
+            ports.append(d)
 
       # If the item is an instance list. For elaborated netlist, every instance
       # list has exactly 1 instantiation.
@@ -98,7 +102,7 @@ def ast_walk_and_swap_inplace( node ):
         elif modname in generic_modules_funcs:
           logging.debug("\t GENERIC replacement found -- %s, line: %d" % (modname, modline))
           generic_swap_count += 1
-          asts.append(generic_modules_funcs[modname]( instance, wires, regs ))
+          asts.append(generic_modules_funcs[modname]( instance, wires, regs, assigns ))
 
         # Instance not found in replacement lists (either a DesignCompiler
         # construct we don't know about or a module that is defined earlier in
@@ -120,6 +124,7 @@ def ast_walk_and_swap_inplace( node ):
     node.items = [Decl([p]) for p in ports if p]   \
                  + [Decl([w]) for w in wires if w] \
                  + [Decl([r]) for r in regs if r]  \
+                 + [a for a in assigns if a]       \
                  + [a for a in asts if a]
 
   ### Recursivly walk down all other nodes
