@@ -134,14 +134,15 @@ $(IVERILOG_BUILD_DIR):
 
 $(PYPY3_BUILD_DIR):
 	mkdir -p $@/download
-	cd $@/download; wget https://bitbucket.org/squeaky/portable-pypy/downloads/pypy3.5-7.0.0-linux_x86_64-portable.tar.bz2
-	cd $@; tar xvf download/pypy3.5-7.0.0-linux_x86_64-portable.tar.bz2
-	cd $@; mv pypy3.5-7.0.0-linux_x86_64-portable/* .
-	cd $@; rmdir pypy3.5-7.0.0-linux_x86_64-portable
+	#cd $@/download; wget https://downloads.python.org/pypy/pypy3.7-v7.3.2-linux64.tar.bz2
+	cd $@/download; wget https://downloads.python.org/pypy/pypy3.6-v7.3.2-linux64.tar.bz2
+	cd $@; tar xvf download/pypy3.6-v7.3.2-linux64.tar.bz2
+	cd $@; mv pypy3.6-v7.3.2-linux64/* .
+	cd $@; rmdir pypy3.6-v7.3.2-linux64/
 
 $(VIRTUALENV_BUILD_DIR): $(PYPY3_BUILD_DIR)
 	mkdir -p $(@D)
-	$(PYPY3_BUILD_DIR)/bin/virtualenv-pypy -p $(PYPY3_BUILD_DIR)/bin/pypy3 $@
+	virtualenv -p $(PYPY3_BUILD_DIR)/bin/pypy3 $@
 	$(PIP) install jinja2 pytest pytest-pythonpath
 
 $(PYVERILOG_BUILD_DIR): $(VIRTUALENV_BUILD_DIR) $(IVERILOG_BUILD_DIR)
