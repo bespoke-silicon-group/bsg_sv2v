@@ -71,7 +71,7 @@ IVERILOG_BUILD_DIR   :=$(TOP_DIR)/tools/iverilog
 # Use these in place for your normal python and pip commands. This will use the
 # virtualenv python and pip which has the installed dependancies.
 PYTHON :=source $(VIRTUALENV_BUILD_DIR)/bin/activate; python
-PIP    :=source $(VIRTUALENV_BUILD_DIR)/bin/activate; pip
+PIP    :=source $(VIRTUALENV_BUILD_DIR)/bin/activate; python -m pip
 
 # Update path variable as needed
 export PATH:=$(PATH):$(IVERILOG_BUILD_DIR)/install/bin
