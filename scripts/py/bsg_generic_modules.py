@@ -53,7 +53,7 @@ def SEQGEN( instance, wires, regs, assigns ):
   # Assert all assumptions before moving on to early catch unexpected configurations
   assert not ( has_async_reset and has_sync_reset )
   assert not ( has_async_set and has_sync_set )
-  assert not ( has_async_enable and has_sync_enable and (not sync_enable_hi) )
+  assert not ( has_async_enable and has_sync_enable and has_async_data )
   assert not ( has_async_data and has_sync_data )
   assert not ( has_clock and has_async_data )
   assert (has_noninverted_output or has_inverted_output)
@@ -70,15 +70,12 @@ def SEQGEN( instance, wires, regs, assigns ):
   else:                  EN = None
 
   # RESET pin
-  if has_sync_reset:    RESET = p['synch_clear']
-  elif has_async_reset: RESET = p['clear']
-  else:                 RESET = None
-
+  if has_sync_reset:                            RESET = p['synch_clear']
+  elif has_async_reset:                         RESET = p['clear']
   # Special case, it seems that async reset can be represented with a
-  # sync_enable tied hi and async enable tied lo.
-  if has_async_enable and sync_enable_hi:
-    EN    = None
-    RESET = p['enable']
+  # async enable without async data
+  elif has_async_enable and not has_async_data: RESET = p['enable']
+  else:                                         RESET = None
 
   # SET pin
   if has_sync_set:    SET = p['synch_preset']
