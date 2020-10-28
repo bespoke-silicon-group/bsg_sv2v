@@ -1,0 +1,12 @@
+diff --git a/pyverilog/vparser/ast.py b/pyverilog/vparser/ast.py
+index 9c5a315..a7c9997 100644
+--- a/pyverilog/vparser/ast.py
++++ b/pyverilog/vparser/ast.py
+@@ -42,6 +42,7 @@ class Node(object):
+         other_attrs = tuple( [ getattr(other, a) for a in other.attr_names ] )
+         if self_attrs != other_attrs: return False
+         other_children = other.children()
++        if len(self.children()) != len(other_children): return False
+         for i, c in enumerate(self.children()):
+             if c != other_children[i]: return False
+         return True
