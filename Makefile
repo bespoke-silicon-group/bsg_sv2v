@@ -68,6 +68,13 @@ VIRTUALENV_BUILD_DIR :=$(TOP_DIR)/tools/virtual_env
 PYVERILOG_BUILD_DIR  :=$(TOP_DIR)/tools/pyverilog
 IVERILOG_BUILD_DIR   :=$(TOP_DIR)/tools/iverilog
 
+# detect that tools have been built, if our target is not make tools
+ifneq (tools,$(MAKECMDGOALS))
+ifeq (,$(shell which $(IVERILOG_BUILD_DIR)/ivl))
+$(error "iverilog is missing; see instructions; run make tools")
+endif
+endif
+
 # Use these in place for your normal python and pip commands. This will use the
 # virtualenv python and pip which has the installed dependancies.
 PYTHON :=source $(VIRTUALENV_BUILD_DIR)/bin/activate; python
