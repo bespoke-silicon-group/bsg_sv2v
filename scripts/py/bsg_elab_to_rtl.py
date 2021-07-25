@@ -117,7 +117,7 @@ if args.wrapper:
 
 ### Output RTL
 
-logging.info('Writting RTL to output file: %s' % args.outfile)
+logging.info('Writing RTL to output file: %s' % args.outfile)
 with open(args.outfile, 'w') as fid:
   fid.write( ASTCodeGenerator().visit( ast ) )
   

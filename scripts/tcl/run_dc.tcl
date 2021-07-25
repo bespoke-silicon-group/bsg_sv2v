@@ -100,7 +100,7 @@ if { [sizeof_collection [get_designs -quiet $DESIGN_NAME]] == 0 } {
   }
 }
 
-### Make suer the current design is correct
+### Make sure the current design is correct
 
 current_design $DESIGN_NAME
 

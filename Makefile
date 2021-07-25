@@ -21,6 +21,8 @@ export LM_LICENSE_FILE ?=
 
 # DesignCompiler dc_shell binary
 export DC_SHELL ?=
+export FM_DIR   ?= $(FM_RELEASE)/linux64/fm/bin
+export FM_SHELL ?= $(FM_DIR)/fm_shell
 
 #===============================================================================
 # DESIGN SETUP
@@ -44,9 +46,9 @@ export DC_SHELL ?=
 # find and link all of the files.
 #===============================================================================
 
-export DESIGN_NAME ?=gcd
+export DESIGN_NAME ?=test_signed
 
-export DESIGN_FILELIST ?=$(TOP_DIR)/examples/gcd/gcd.flist
+export DESIGN_FILELIST ?=$(TOP_DIR)/examples/$(DESIGN_NAME)/$(DESIGN_NAME).flist
 
 export DESIGN_DIRECTORIES_MK ?=
 
@@ -166,6 +168,26 @@ clean_tools:
 	rm -rf $(VIRTUALENV_BUILD_DIR)
 	rm -rf $(PYVERILOG_BUILD_DIR)
 	rm -rf $(IVERILOG_BUILD_DIR)
+
+
+
+# invoke shell which has all of the cad tools active
+shell:
+	PS1="[cadenv> \u \w] " /bin/bash
+
+# print out makefile variable
+%.echo:
+	@echo $($*)
+
+# standalone helper rule to run formality against two copies
+# TODO: support file list and more deeply integrate
+# make <first file>@<top_level>@second file>.formality
+# examples:
+#         make ./examples/div_9/div_9.v@div_9@results/div_9.sv2v.v.formality
+#         make examples/test_signed/test_signed.v@test_signed@results/test_signed.sv2v.v.formality
+%.formality:
+	echo "read_sverilog -r $(word 1,$(subst @, ,$*)); set_top $(word 2,$(subst @, ,$*)); read_sverilog -i $(word 3,$(subst @, ,$*)); set_top $(word 2,$(subst @, ,$*)); verify" | \
+	SYNOPSYS=$(FM_RELEASE) $(FM_SHELL)
 
 #===============================================================================
 # CLEAN UP
