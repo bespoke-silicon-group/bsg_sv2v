@@ -46,7 +46,7 @@ export FM_SHELL ?= $(FM_DIR)/fm_shell
 # find and link all of the files.
 #===============================================================================
 
-export DESIGN_NAME ?=test_signed
+export DESIGN_NAME ?=gcd
 
 export DESIGN_FILELIST ?=$(TOP_DIR)/examples/$(DESIGN_NAME)/$(DESIGN_NAME).flist
 
