@@ -71,10 +71,14 @@ PYVERILOG_BUILD_DIR  :=$(TOP_DIR)/tools/pyverilog
 IVERILOG_BUILD_DIR   :=$(TOP_DIR)/tools/iverilog
 
 # detect that tools have been built, if our target is not make tools
-ifneq (tools,$(MAKECMDGOALS))
-ifeq (,$(shell which $(IVERILOG_BUILD_DIR)/ivl))
-$(error "iverilog is missing; see instructions; run make tools")
-endif
+ifeq (tools,$(MAKECMDGOALS))
+else ifeq (clean,$(MAKECMDGOALS))
+else ifeq (clean_tools,$(MAKECMDGOALS))
+else ifeq (deep_clean,$(MAKECMDGOALS))
+else
+  ifeq (,$(shell which $(IVERILOG_BUILD_DIR)/ivl))
+    $(error "iverilog is missing; see instructions; run make tools")
+  endif
 endif
 
 # Use these in place for your normal python and pip commands. This will use the
