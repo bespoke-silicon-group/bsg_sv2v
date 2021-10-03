@@ -114,13 +114,13 @@ def DIV_TC_OP( instance ):
 def REM_UNS_OP( instance ):
   p = __get_instance_ports(instance)
   rval = Mod(p['A'], p['B'])
-  return Assign(Lvalue(p['Z']), Rvalue(rval))
+  return Assign(Lvalue(p['REMAINDER']), Rvalue(rval))
 
 # Signed remainder operation
 def REM_TC_OP( instance ):
   p = __get_instance_ports(instance)
   rval = Mod(SystemCall('signed', [p['A']]), SystemCall('signed',[p['B']]))
-  return Assign(Lvalue(p['Z']), Rvalue(rval))
+  return Assign(Lvalue(p['REMAINDER']), Rvalue(rval))
 
 # Unsigned equals operation
 def EQ_UNS_OP( instance ):
