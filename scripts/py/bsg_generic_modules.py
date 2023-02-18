@@ -140,9 +140,9 @@ def SEQGEN( instance, wires, regs, assigns ):
   sens = []
   if has_clock:        sens.append( Sens(p['clocked_on'], type='posedge') )
   if has_async_data:   sens.append( Sens(p['data_in'],    type='level') )
-  if has_async_enable: sens.append( Sens(p['enable'],     type='posedge') )
-  if has_async_reset:  sens.append( Sens(p['clear'],      type='posedge') )
-  if has_async_set:    sens.append( Sens(p['preset'],     type='posedge') )
+  if has_async_enable: sens.append( Sens(p['enable'],     type='level') )
+  if has_async_reset:  sens.append( Sens(p['clear'],      type='level') )
+  if has_async_set:    sens.append( Sens(p['preset'],     type='level') )
 
   # Return always block AST
   return Always(SensList(sens), stmt if type(stmt) == Block else Block([stmt]))
